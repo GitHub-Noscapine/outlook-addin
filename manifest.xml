@@ -32,7 +32,7 @@
     <FormSettings>
         <Form xsi:type="ItemRead">
             <DesktopSettings>
-                <SourceLocation DefaultValue="https://0537691767f6.ngrok-free.app/form.html"/>
+                <SourceLocation DefaultValue="https://github-noscapine.github.io/outlook-addin/form.html"/>
                 <RequestedHeight>250</RequestedHeight>
             </DesktopSettings>
         </Form>
@@ -117,8 +117,8 @@
             </bt:Images>
             
             <bt:Urls>
-                <bt:Url id="functionFile" DefaultValue="https://0537691767f6.ngrok-free.app/function-file/function-file.html"/>
-                <bt:Url id="taskPaneUrl" DefaultValue="https://0537691767f6.ngrok-free.app/form.html"/>
+                <bt:Url id="functionFile" DefaultValue="https://github-noscapine.github.io/outlook-addin/function-file.html"/>
+                <bt:Url id="taskPaneUrl" DefaultValue="https://github-noscapine.github.io/outlook-addin/form.html"/>
             </bt:Urls>
             
             <bt:ShortStrings>
