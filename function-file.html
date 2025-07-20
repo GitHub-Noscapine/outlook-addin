@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Function File</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+    <script>
+        Office.onReady(function() {
+            // Function file is ready
+            console.log('Function file loaded');
+        });
+
+        // This function file is required by Outlook add-ins
+        // It can contain functions that are called by ribbon buttons
+        // For a basic task pane add-in, this file just needs to exist and load Office.js
+        
+        function showNotification(message) {
+            console.log(message);
+        }
+    </script>
+</body>
+</html>

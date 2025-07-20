@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Outlook Panel Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 16px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 12px;
+            padding: 8px 14px;
+            font-size: 14px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>Reply to Email</h2>
+    <label for="recipient">Optional: recipient’s name</label>
+    <input type="text" id="recipient" name="recipient">
+
+    <label for="instruction">Instruct the AI to write your email</label>
+    <textarea id="instruction" name="instruction" rows="5" placeholder="e.g., Ask for more info."></textarea>
+
+    <button onclick="alert('Email will be generated!')">Write →</button>
+</body>
+</html>
