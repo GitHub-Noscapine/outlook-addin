@@ -87,31 +87,39 @@
   <label for="history">Conversation History</label>
   <div id="history">Waiting for input...</div>
 
-  <script>
-    // Placeholder: Replace with injected subject later
-    document.getElementById("emailSubject").innerText = "Subject of the email here";
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<script>
+  Office.onReady(() => {
+    const item = Office.context.mailbox.item;
+    if (item && item.subject) {
+      document.getElementById("emailSubject").innerText = item.subject;
+    } else {
+      document.getElementById("emailSubject").innerText = "(Subject not available)";
+    }
+  });
 
-    document.getElementById("askBtn").onclick = () => {
-      const tone = document.getElementById("tone").value;
-      const prompt = document.getElementById("instruction").value;
-      const history = document.getElementById("history");
+  document.getElementById("askBtn").onclick = () => {
+    const tone = document.getElementById("tone").value;
+    const prompt = document.getElementById("instruction").value;
+    const history = document.getElementById("history");
 
-      const newPrompt = `🧾 Prompt: [${tone}] ${prompt}`;
-      const mockResponse = "✉️ Response: This is where the AI reply would appear.";
+    const newPrompt = `🧾 Prompt: [${tone}] ${prompt}`;
+    const mockResponse = "✉️ Response: This is where the AI reply would appear.";
 
-      history.innerText += `\n\n${newPrompt}\n${mockResponse}`;
-      document.getElementById("instruction").value = '';
-    };
+    history.innerText += `\n\n${newPrompt}\n${mockResponse}`;
+    document.getElementById("instruction").value = '';
+  };
 
-    document.getElementById("draftBtn").onclick = () => {
-      alert("✅ Draft will be created in Outlook using the last AI reply.");
-    };
+  document.getElementById("draftBtn").onclick = () => {
+    alert("✅ Draft will be created in Outlook using the last AI reply.");
+  };
 
-    document.getElementById("cancelBtn").onclick = () => {
-      document.getElementById("instruction").value = '';
-      document.getElementById("history").innerText += `\n\n❌ Cancelled by user.`;
-    };
-  </script>
+  document.getElementById("cancelBtn").onclick = () => {
+    document.getElementById("instruction").value = '';
+    document.getElementById("history").innerText += `\n\n❌ Cancelled by user.`;
+  };
+</script>
+
 
 </body>
 </html>
