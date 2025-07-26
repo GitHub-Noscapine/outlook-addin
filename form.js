@@ -104,9 +104,9 @@ document.getElementById("draftBtn").onclick = async () => {
   }
 
   console.log(Office.context.requirements.isSetSupported("Mailbox", "1.1"));
-  console.log(typeof Office.context.mailbox.displayReplyAllForm);
+  console.log(typeof Office.context.mailbox.item.displayReplyAllForm);
 
-  Office.context.mailbox.displayReplyAllForm({
+  Office.context.mailbox.item.displayReplyAllForm({
     htmlBody: `<p>${lastAIReply.trim().replace(/^\=+/g, "").replace(/\n/g, "<br>")}</p>`
   });
 };
