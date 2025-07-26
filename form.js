@@ -104,9 +104,11 @@ document.getElementById("draftBtn").onclick = async () => {
   }
 
   Office.context.mailbox.displayNewMessageForm({
+    const originalSubject = Office.context.mailbox.item.subject || "";
+    const subject = originalSubject.startsWith("Re:") ? originalSubject : `Re: ${originalSubject}`;
     toRecipients: [Office.context.mailbox.item.from.emailAddress],
-    subject: `Re: ${Office.context.mailbox.item.subject}`,
-    htmlBody: `<p>${lastAIReply.replace(/\n/g, "<br>")}</p>`
+    subject,
+    htmlBody: `<p>${lastAIReply.trim().replace(/^\=+/g, "").replace(/\n/g, "<br>")}</p>`
   });
 };
 
