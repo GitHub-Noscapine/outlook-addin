@@ -104,7 +104,7 @@ document.getElementById("draftBtn").onclick = async () => {
   }
 
   Office.context.mailbox.displayReplyForm({
-    htmlBody: `<p>${lastAIReply.trim().replace(/\n/g, "<br>")}</p>`
+    htmlBody: `<p>${lastAIReply.trim().replace(/^\=+/g, "").replace(/\n/g, "<br>")}</p>`
   });
 };
 
