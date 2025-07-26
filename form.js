@@ -103,7 +103,9 @@ document.getElementById("draftBtn").onclick = async () => {
     await sendToN8N({ type: "finalize", conversationId });
   }
 
-  Office.context.mailbox.displayReplyForm({
+  Office.context.mailbox.displayNewMessageForm({
+    toRecipients: [],
+    subject: `Re: ${document.getElementById("emailSubject").innerText}`,
     htmlBody: `<p>${lastAIReply}</p>`
   });
 };
