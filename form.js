@@ -1,12 +1,17 @@
 let conversationId = null;
 let lastAIReply = "";
 
+console.log("Form.js loaded");
+
 Office.onReady(() => {
+  console.log("✅ Office.js is ready");
   const item = Office.context.mailbox.item;
   if (item && item.subject) {
     document.getElementById("emailSubject").innerText = item.subject;
+    console.log("📨 Email subject loaded:", item.subject);
   } else {
     document.getElementById("emailSubject").innerText = "(Subject not available)";
+    console.warn("⚠️ No subject available.");
   }
 });
 
@@ -48,6 +53,7 @@ async function sendToN8N(payload) {
 }
 
 document.getElementById("askBtn").onclick = async () => {
+  console.log("🟦 Ask AI button clicked");
   const prompt = document.getElementById("instruction").value;
   const tone = document.getElementById("tone").value;
   const subject = document.getElementById("emailSubject").innerText;
@@ -87,6 +93,7 @@ document.getElementById("askBtn").onclick = async () => {
 };
 
 document.getElementById("draftBtn").onclick = async () => {
+  console.log("🟨 Create Draft button clicked");
   if (!lastAIReply) {
     alert("⚠️ No AI reply to use as draft.");
     return;
@@ -102,6 +109,7 @@ document.getElementById("draftBtn").onclick = async () => {
 };
 
 document.getElementById("cancelBtn").onclick = () => {
+  console.log("🟥 Cancel button clicked");
   document.getElementById("instruction").value = '';
   document.getElementById("history").innerText += `\n\n❌ Cancelled by user.`;
   conversationId = null;
