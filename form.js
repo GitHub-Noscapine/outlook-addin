@@ -103,12 +103,8 @@ document.getElementById("draftBtn").onclick = async () => {
     await sendToN8N({ type: "finalize", conversationId });
   }
 
-  Office.context.mailbox.displayNewMessageForm({
-    const originalSubject = Office.context.mailbox.item.subject || "";
-    const subject = originalSubject.startsWith("Re:") ? originalSubject : `Re: ${originalSubject}`;
-    toRecipients: [Office.context.mailbox.item.from.emailAddress],
-    subject,
-    htmlBody: `<p>${lastAIReply.trim().replace(/^\=+/g, "").replace(/\n/g, "<br>")}</p>`
+  Office.context.mailbox.displayReplyForm({
+    htmlBody: `<p>${lastAIReply.trim().replace(/\n/g, "<br>")}</p>`
   });
 };
 
