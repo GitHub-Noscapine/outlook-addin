@@ -95,8 +95,8 @@ document.getElementById("askBtn").onclick = async () => {
 document.getElementById("draftBtn").onclick = async () => {
   console.log("🟨 Create Draft button clicked");
   if (!lastAIReply) {
-    alert("⚠️ No AI reply to use as draft.");
-    return;
+  document.getElementById("history").innerText += "\n\n⚠️ No AI reply available to draft.";
+  return;
   }
 
   if (conversationId) {
@@ -104,9 +104,9 @@ document.getElementById("draftBtn").onclick = async () => {
   }
 
   Office.context.mailbox.displayNewMessageForm({
-    toRecipients: [],
-    subject: `Re: ${document.getElementById("emailSubject").innerText}`,
-    htmlBody: `<p>${lastAIReply}</p>`
+    toRecipients: [Office.context.mailbox.item.from.emailAddress],
+    subject: `Re: ${Office.context.mailbox.item.subject}`,
+    htmlBody: `<p>${lastAIReply.replace(/\n/g, "<br>")}</p>`
   });
 };
 
