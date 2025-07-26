@@ -110,10 +110,15 @@ document.getElementById("draftBtn").onclick = async () => {
   });
 };
 
-document.getElementById("cancelBtn").onclick = () => {
+document.getElementById("cancelBtn").onclick = async () => {
   console.log("🟥 Cancel button clicked");
+
+  if (conversationId) {
+    await sendToN8N({ type: "finalize", conversationId });
+  }
+
   document.getElementById("instruction").value = '';
-  document.getElementById("history").innerText += `\n\n❌ Cancelled by user.`;
+  document.getElementById("history").innerText = `❌ Conversation cancelled and memory cleared.`;
   conversationId = null;
   lastAIReply = "";
 };
