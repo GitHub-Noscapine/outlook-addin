@@ -70,9 +70,9 @@ document.getElementById("askBtn").onclick = async () => {
     }
 
     const payload = {
-      type: conversationId ? (history.innerText.includes("🧾 Prompt") ? "continue" : "start"),
+      type: conversationId ? (history.innerText.includes("🧾 Prompt") ? "continue" : "start") : "start",
       conversationId,
-      subject,
+      subject: subject,
       body: codifiedBody,
       from: "user@outlook.com",
       promptStyle: tone,
