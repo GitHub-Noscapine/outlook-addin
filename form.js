@@ -103,7 +103,7 @@ document.getElementById("draftBtn").onclick = async () => {
     await sendToN8N({ type: "finalize", conversationId });
   }
 
-  Office.context.mailbox.displayReplyForm({
+  Office.context.mailbox.displayReplyAllForm({
     htmlBody: `<p>${lastAIReply.trim().replace(/^\=+/g, "").replace(/\n/g, "<br>")}</p>`
   });
 };
