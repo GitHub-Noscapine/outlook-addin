@@ -88,7 +88,7 @@ document.getElementById("askBtn").onclick = async () => {
 
     const codifyResult = await codifyResponse.json();
     const encodedBody = codifyResult.body || "";
-    const encodedPrompt = codifyResult.prompt || "";
+    const encodedPrompt = codifyResult.fullPrompt || "";
 
     // 🔹 Send codified body + prompt to n8n
     const payload = {
