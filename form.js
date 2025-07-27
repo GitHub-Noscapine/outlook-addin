@@ -32,15 +32,15 @@ async function fetchEmailBody() {
   });
 }
 
-async function codify(text) {
-  const response = await fetch("http://localhost:5000/codify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ body: text })
-  });
-  const result = await response.json();
-  return result.body;
-}
+// async function codify(text) {
+  // const response = await fetch("http://localhost:5000/codify", {
+    // method: "POST",
+    // headers: { "Content-Type": "application/json" },
+    // body: JSON.stringify({ body: text })
+  // });
+  // const result = await response.json();
+  // return result.body;
+// }
 
 async function sendToN8N(payload) {
   const response = await fetch("http://localhost:5678/webhook/auto-reply", {
@@ -60,34 +60,71 @@ document.getElementById("askBtn").onclick = async () => {
   const history = document.getElementById("history");
 
   try {
-    const emailBody = await fetchEmailBody();
-    const codifiedBody = await codify(emailBody);
-
-    // Generate conversation ID on first request
+    // Get conversation ID or generate a new one
     if (!conversationId) {
       const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "");
       conversationId = `conv-${timestamp}-${Math.floor(Math.random() * 10000)}`;
     }
 
+    const type = history.innerText.includes("🧾 Prompt") ? "continue" : "start";
+
+    // Fetch email body only once at start
+    let emailBody = "";
+    if (type === "start") {
+      emailBody = await fetchEmailBody();
+    }
+
+    // 🔹 Codify emailBody + prompt via Python
+    const codifyResponse = await fetch("http://localhost:5000/codify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversationId,
+        type,
+        body: emailBody,
+        customInstructions: prompt
+      })
+    });
+
+    const codifyResult = await codifyResponse.json();
+    const encodedBody = codifyResult.body || "";
+    const encodedPrompt = codifyResult.prompt || "";
+
+    // 🔹 Send codified body + prompt to n8n
     const payload = {
-      type: conversationId ? (history.innerText.includes("🧾 Prompt") ? "continue" : "start") : "start",
+      type,
       conversationId,
       subject,
-      body: codifiedBody,
+      body: encodedBody,
       from: "user@outlook.com",
       promptStyle: tone,
-      customInstructions: prompt
+      customInstructions: encodedPrompt
     };
 
-    const response = await sendToN8N(payload);
+    const n8nResponse = await sendToN8N(payload);
+    const aiReply = n8nResponse.replyContent || "(No response)";
 
-    const aiReply = response.replyContent || "(No response)";
-    lastAIReply = aiReply;
+    // 🔹 Decode AI reply
+    const decodeResponse = await fetch("http://localhost:5000/decodify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversationId,
+        body: aiReply
+      })
+    });
 
-    history.innerText += `\n\n🧾 Prompt [${tone}]: ${prompt}\n✉️ Response: ${aiReply}`;
+    const decodedResult = await decodeResponse.json();
+    const decodedReply = decodedResult.body || "(Decoding failed)";
+
+    lastAIReply = decodedReply;
+
+    // 🔹 Append history (with raw prompt, not encoded)
+    history.innerText += `\n\n🧾 Prompt [${tone}]: ${prompt}\n✉️ Response: ${decodedReply}`;
     document.getElementById("instruction").value = '';
 
   } catch (error) {
+    console.error(error);
     history.innerText += `\n\n❌ Error: ${error}`;
   }
 };
