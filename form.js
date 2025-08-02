@@ -70,9 +70,12 @@ document.getElementById("askBtn").onclick = async () => {
   document.getElementById("cancelBtn").disabled = true;
   document.getElementById("askBtn").disabled = true;
 
-  // Show loading spinner
-  history.innerHTML = '<div class="spinner"></div>';
-  
+  // Show spinner overlay without clearing history
+  const spinnerOverlay = document.createElement("div");
+  spinnerOverlay.className = "spinner-overlay";
+  spinnerOverlay.innerHTML = `<div class="spinner"></div>`;
+  document.getElementById("history-wrapper").appendChild(spinnerOverlay);
+
   try {
     // Get conversation ID or generate a new one
     if (!conversationId) {
@@ -161,6 +164,8 @@ document.getElementById("askBtn").onclick = async () => {
       document.getElementById("draftBtn").disabled = false;
       document.getElementById("cancelBtn").disabled = false;
       document.getElementById("askBtn").disabled = false;
+      const existingOverlay = document.querySelector(".spinner-overlay");
+      if (existingOverlay) existingOverlay.remove();
     }
 };
 
@@ -192,6 +197,7 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
 
 
