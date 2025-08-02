@@ -82,19 +82,21 @@ document.getElementById("askBtn").onclick = async () => {
         conversationId,
         type,
         body: emailBody,
+        subject: subject,
         customInstructions: prompt
       })
     });
 
     const codifyResult = await codifyResponse.json();
     const encodedBody = codifyResult.body || "";
+    const encodedSubject = codifyResult.subject || "";
     const encodedPrompt = codifyResult.fullPrompt || "";
 
     // 🔹 Send codified body + prompt to n8n
     const payload = {
       type,
       conversationId,
-      subject,
+      subject: encodedSubject,
       body: encodedBody,
       from: "user@outlook.com",
       promptStyle: tone,
@@ -157,3 +159,4 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
