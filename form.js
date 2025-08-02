@@ -64,6 +64,14 @@ document.getElementById("askBtn").onclick = async () => {
   const tone = document.getElementById("tone").value;
   const subject = document.getElementById("emailSubject").innerText;
   const history = document.getElementById("history");
+
+  // Disable buttons
+  document.getElementById("draftBtn").disabled = true;
+  document.getElementById("cancelBtn").disabled = true;
+  document.getElementById("askBtn").disabled = true;
+
+  // Show loading spinner
+  history.innerHTML = '<div class="spinner"></div>';
   
   try {
     // Get conversation ID or generate a new one
@@ -139,10 +147,21 @@ document.getElementById("askBtn").onclick = async () => {
 
     document.getElementById("instruction").value = '';
     
+  //} catch (error) {
+    //console.error(error);
+    //history.innerText += `\n\n❌ Error: ${error}`;
+  //}
+//};
+
   } catch (error) {
-    console.error(error);
-    history.innerText += `\n\n❌ Error: ${error}`;
-  }
+      console.error(error);
+      history.innerHTML = `<div class="spinner"></div>\n\n❌ Error: ${error}`;
+    } finally {
+      // Re-enable buttons
+      document.getElementById("draftBtn").disabled = false;
+      document.getElementById("cancelBtn").disabled = false;
+      document.getElementById("askBtn").disabled = false;
+    }
 };
 
 document.getElementById("draftBtn").onclick = async () => {
@@ -173,5 +192,6 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
 
