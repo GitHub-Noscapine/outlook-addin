@@ -52,13 +52,19 @@ async function sendToN8N(payload) {
   return await response.json();
 }
 
+function escapeHTML(str) {
+  return str.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+}
+
 document.getElementById("askBtn").onclick = async () => {
   console.log("🟦 Ask AI button clicked");
   const prompt = document.getElementById("instruction").value;
   const tone = document.getElementById("tone").value;
   const subject = document.getElementById("emailSubject").innerText;
   const history = document.getElementById("history");
-
+  
   try {
     // Get conversation ID or generate a new one
     if (!conversationId) {
@@ -122,9 +128,17 @@ document.getElementById("askBtn").onclick = async () => {
     lastAIReply = decodedReply;
 
     // 🔹 Append history (with raw prompt, not encoded)
-    history.innerText += `\n\n🧾 Prompt [${tone}]: ${prompt}\n✉️ Response: ${decodedReply}`;
-    document.getElementById("instruction").value = '';
+    // history.innerText += `\n\n🧾 Prompt [${tone}]: ${prompt}\n✉️ Response: ${decodedReply}`;
+    
+    history.insertAdjacentHTML("beforeend",
+  `  <div style="color: #0078D4;"><strong>🧾 Prompt [${tone}]:</strong> ${escapeHTML(prompt)}</div>
+     <div>✉️ Response: ${escapeHTML(decodedReply)}</div><br>`
+    );
 
+    history.scrollTop = history.scrollHeight;
+
+    document.getElementById("instruction").value = '';
+    
   } catch (error) {
     console.error(error);
     history.innerText += `\n\n❌ Error: ${error}`;
@@ -159,4 +173,5 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
