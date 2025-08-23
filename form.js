@@ -13,6 +13,53 @@ Office.onReady(() => {
     document.getElementById("emailSubject").innerText = "(Subject not available)";
     console.warn("⚠️ No subject available.");
   }
+
+  // --- Telegram → Form bridge poller ---
+  let bridgePolling = null;
+  let lastBridgeTs = 0;
+  const TELEGRAM_CONFLICT_MODE = "confirm";
+
+  async function pollBridgeOnce() {
+    try {
+      const r = await fetch("http://127.0.0.1:5678/webhook/form-bridge/pull");
+      const data = await r.json();
+      if (!data || !data.prompt) return;
+      if (data.ts && data.ts <= lastBridgeTs) return;
+
+      const input = document.getElementById("instruction");
+      const toneEl = document.getElementById("tone");
+      const incoming = data.prompt.trim();
+      const current = (input.value || "").trim();
+
+      if (toneEl && data.tone) toneEl.value = data.tone;
+
+      if (!current) {
+        input.value = incoming;
+        // document.getElementById("askBtn").click(); // automatic clicking on askBtn
+      } else {
+        if (TELEGRAM_CONFLICT_MODE === "replace") {
+          input.value = incoming;
+        } else if (TELEGRAM_CONFLICT_MODE === "append") {
+          input.value = current + "\n\n" + incoming;
+        } else { // confirm
+          const choice = window.confirm(
+            "Telegram sent a new prompt.\n\nReplace existing text?\n\nOK = Replace, Cancel = Append"
+          );
+          input.value = choice ? incoming : current + "\n\n" + incoming;
+        }
+        // document.getElementById("askBtn").click(); // automatic clicking on askBtn
+      }
+
+      lastBridgeTs = data.ts || Date.now();
+    } catch (e) {
+      console.warn("Bridge poll failed:", e);
+    }
+  }
+
+  if (!bridgePolling) {
+    bridgePolling = setInterval(pollBridgeOnce, 2000); // every 2s
+  }
+
 });
 
 async function fetchEmailBody() {
@@ -197,6 +244,7 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
 
 
