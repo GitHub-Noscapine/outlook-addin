@@ -69,7 +69,7 @@ Office.onReady(() => {
       }
   
       // Auto-run your existing flow
-      askBtn.click();
+      // askBtn.click(); // enable or disable automatic button click
       lastBridgeTs = data.ts || Date.now();
     } catch (e) {
       console.warn("Bridge poll failed:", e);
@@ -267,6 +267,7 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
 
 
