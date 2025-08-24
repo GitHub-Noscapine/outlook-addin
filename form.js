@@ -17,48 +17,71 @@ Office.onReady(() => {
   // --- Telegram → Form bridge poller ---
   let bridgePolling = null;
   let lastBridgeTs = 0;
-  const TELEGRAM_CONFLICT_MODE = "confirm";
-
+  
+  // How to handle Telegram text when the field already has content:
+  // "append"  → add below existing text (default)
+  // "replace" → overwrite the field
+  // "confirm" → ask user to Replace or Append
+  const TELEGRAM_CONFLICT_MODE = "append";
+  
   async function pollBridgeOnce() {
     try {
-      const r = await fetch("http://127.0.0.1:5678/webhook/form-bridge/pull");
-      const data = await r.json();
+      const r = await fetch("http://127.0.0.1:5678/webhook/form-bridge/pull?t=" + Date.now(), {
+        method: "GET",
+        cache: "no-store"
+      });
+      if (!r.ok) return;
+      const data = await r.json(); // { prompt, tone, chatId, ts } or { prompt: null }
       if (!data || !data.prompt) return;
-      if (data.ts && data.ts <= lastBridgeTs) return;
-
-      const input = document.getElementById("instruction");
+      if (data.ts && data.ts <= lastBridgeTs) return; // already handled
+  
+      const input = document.getElementById("instruction"); // <-- make sure ID matches your textarea
       const toneEl = document.getElementById("tone");
-      const incoming = data.prompt.trim();
-      const current = (input.value || "").trim();
-
+      const askBtn = document.getElementById("askBtn");     // <-- make sure ID matches your button
+  
+      if (!input || !askBtn) {
+        console.warn("Form elements not found: #instruction or #askBtn");
+        return;
+      }
+  
+      const incoming = (data.prompt || "").trim();
+      const current  = (input.value || "").trim();
+  
       if (toneEl && data.tone) toneEl.value = data.tone;
-
+  
       if (!current) {
+        console.log("[bridge] field empty → set + run");
         input.value = incoming;
-        // document.getElementById("askBtn").click(); // automatic clicking on askBtn
       } else {
         if (TELEGRAM_CONFLICT_MODE === "replace") {
+          console.log("[bridge] field had text → REPLACE");
           input.value = incoming;
         } else if (TELEGRAM_CONFLICT_MODE === "append") {
+          console.log("[bridge] field had text → APPEND");
           input.value = current + "\n\n" + incoming;
-        } else { // confirm
+        } else {
+          console.log("[bridge] field had text → CONFIRM");
           const choice = window.confirm(
-            "Telegram sent a new prompt.\n\nReplace existing text?\n\nOK = Replace, Cancel = Append"
+            "Telegram sent a new prompt.\n\nReplace existing text?\nOK = Replace, Cancel = Append"
           );
           input.value = choice ? incoming : current + "\n\n" + incoming;
         }
-        // document.getElementById("askBtn").click(); // automatic clicking on askBtn
       }
-
+  
+      // Auto-run your existing flow
+      askBtn.click();
       lastBridgeTs = data.ts || Date.now();
     } catch (e) {
       console.warn("Bridge poll failed:", e);
     }
   }
-
-  if (!bridgePolling) {
-    bridgePolling = setInterval(pollBridgeOnce, 2000); // every 2s
+  
+  function startBridgePolling() {
+    if (!bridgePolling) bridgePolling = setInterval(pollBridgeOnce, 2000);
   }
+  
+  // call this at the end of your Office.onReady block:
+  startBridgePolling();
 
 });
 
@@ -244,6 +267,7 @@ document.getElementById("cancelBtn").onclick = async () => {
   conversationId = null;
   lastAIReply = "";
 };
+
 
 
 
